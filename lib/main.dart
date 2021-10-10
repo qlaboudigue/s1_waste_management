@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:s1_waste_management/constants.dart';
 import 'package:s1_waste_management/models/business/business.dart';
+import 'package:s1_waste_management/models/business/plastic_recycler.dart';
 import 'package:s1_waste_management/services/services.dart';
 
 void main() {
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       wasteMap.update(kOtherKey, (value) => value + district.other!);
     }
 
-    /// Sum and store services
+    /// Sum and store services data
     for (var service in data.services!) {
       switch (service.type) {
         case kBurnerKey: {
@@ -119,6 +120,25 @@ class _HomePageState extends State<HomePage> {
 
 
     /// Init waste & service
+    /// Plastics
+    Recyclable pET = Recyclable(type: kPETKey, quantity: wasteMap[kPETKey]!, recyclingCo2Rate: co2.plastic!.pET!.recyclingCo2Rate!, burningCo2Rate: co2.plastic!.pET!.burningCo2Rate!);
+    Recyclable pVC = Recyclable(type: kPVCKey, quantity: wasteMap[kPVCKey]!, recyclingCo2Rate: co2.plastic!.pVC!.recyclingCo2Rate!, burningCo2Rate: co2.plastic!.pVC!.burningCo2Rate!);
+    Recyclable pC = Recyclable(type: kPCKey, quantity: wasteMap[kPCKey]!, recyclingCo2Rate: co2.plastic!.pC!.recyclingCo2Rate!, burningCo2Rate: co2.plastic!.pC!.burningCo2Rate!);
+    Recyclable pEHD = Recyclable(type: kPEHDKey, quantity: wasteMap[kPEHDKey]!, recyclingCo2Rate: co2.plastic!.pEHD!.recyclingCo2Rate!, burningCo2Rate: co2.plastic!.pEHD!.burningCo2Rate!);
+    wasteManager.addRecyclablePlastic(pET);
+    wasteManager.addRecyclablePlastic(pVC);
+    wasteManager.addRecyclablePlastic(pC);
+    wasteManager.addRecyclablePlastic(pEHD);
+
+    for (var service in data.services!) {
+      if (service.type == kPlasticRecyclerKey) {
+        List<String> acceptedPlastics = service.acceptedPlastics!.map((e) => e.toString()).toList();
+        PlasticRecycler plasticRecycler = PlasticRecycler(type: kRecyclingKey, capacity: service.capacity!.toDouble(), acceptedWastes: acceptedPlastics);
+        wasteManager.addPlasticRecycler(plasticRecycler);
+      }
+    }
+
+
     /// Paper
     Recyclable paper = Recyclable(type: kPaperKey, quantity: wasteMap[kPaperKey]!, recyclingCo2Rate: co2.paper!.recyclingCo2Rate!, burningCo2Rate: co2.paper!.burningCo2Rate!);
     Recycler paperRecycler = Recycler(type: kPaperRecyclerKey, capacity: serviceMap[kPaperRecyclerKey]!);
