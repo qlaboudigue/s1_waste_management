@@ -222,31 +222,3 @@ class _HomePageState extends State<HomePage> {
 
 }
 
-
-/*
-
-Padding(
-        padding: EdgeInsets.all(16.0),
-        child: results.isNotEmpty
-        ? PieChart(
-            dataMap: results,
-          legendOptions: LegendOptions(
-            showLegendsInRow: false,
-            legendPosition: LegendPosition.right,
-            showLegends: true,
-            legendTextStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          chartValuesOptions: ChartValuesOptions(
-            showChartValueBackground: true,
-            showChartValues: true,
-            showChartValuesInPercentage: false,
-            showChartValuesOutside: true,
-            decimalPlaces: 1,
-          ),
-        )
-            : Text('Results'),
-      ),
-
- */
