@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:s1_waste_management/constants.dart';
 import 'package:s1_waste_management/models/business/business.dart';
 import 'package:s1_waste_management/models/business/plastic_recycler.dart';
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -32,24 +34,63 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  Map<String, double> results = {};
+
   // INIT
   @override
   void initState() {
-    // TODO: implement initState
+    // _calculateGlobalCo2();
     super.initState();
-    _calculateGlobalCo2();
   }
 
 
   // BUILD
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Waste Management'),
+      ),
+      body: FutureBuilder<Map<String, double>>(
+        future: _calculateGlobalCo2(), // function where you call your api
+        builder: (BuildContext context, AsyncSnapshot<Map<String, double>> snapshot) {  // AsyncSnapshot<Your object type>
+          if( snapshot.connectionState == ConnectionState.waiting){
+            return  Center(child: Text('Please wait its loading...'));
+          }else{
+            if (snapshot.hasError)
+              return Center(child: Text('Error: ${snapshot.error}'));
+            else
+              return Padding(
+                padding: EdgeInsets.all(16.0),
+                child: PieChart(
+                  dataMap: snapshot.data!,
+                  legendOptions: LegendOptions(
+                    showLegendsInRow: false,
+                    legendPosition: LegendPosition.right,
+                    showLegends: true,
+                    legendTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  chartValuesOptions: ChartValuesOptions(
+                    showChartValueBackground: true,
+                    showChartValues: true,
+                    showChartValuesInPercentage: false,
+                    showChartValuesOutside: false,
+                    decimalPlaces: 1,
+                  ),
+                )
+              );
+              // return Center(child: new Text('${snapshot.data}'));  // snapshot.data  :- get your object which is pass from your downloadData() function
+          }
+        },
+      )
+    );
   }
 
   // METHODS
 
-  void _calculateGlobalCo2() async {
+  Future<Map<String, double>> _calculateGlobalCo2() async {
     /// Get data from json inputs
     final DataService dataService = DataService();
     final Co2Service co2service = Co2Service();
@@ -163,8 +204,9 @@ class _HomePageState extends State<HomePage> {
 
     /// Launch waste management operation
     wasteManager.manageBatch();
-
-
+    Map<String, double> results = {};
+    results = wasteManager.showCo2ByWasteType();
+    return results;
   }
 
 
@@ -181,3 +223,30 @@ class _HomePageState extends State<HomePage> {
 }
 
 
+/*
+
+Padding(
+        padding: EdgeInsets.all(16.0),
+        child: results.isNotEmpty
+        ? PieChart(
+            dataMap: results,
+          legendOptions: LegendOptions(
+            showLegendsInRow: false,
+            legendPosition: LegendPosition.right,
+            showLegends: true,
+            legendTextStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          chartValuesOptions: ChartValuesOptions(
+            showChartValueBackground: true,
+            showChartValues: true,
+            showChartValuesInPercentage: false,
+            showChartValuesOutside: true,
+            decimalPlaces: 1,
+          ),
+        )
+            : Text('Results'),
+      ),
+
+ */

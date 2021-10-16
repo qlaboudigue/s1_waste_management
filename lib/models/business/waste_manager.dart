@@ -103,6 +103,14 @@ class WasteManager {
 
   }
 
+  Map<String, double> showCo2ByWasteType() {
+    Map<String, double> co2Results = {};
+    results.forEach((key, value) {
+      co2Results[key] = double.parse(value.toStringAsFixed(2));
+    });
+    return co2Results;
+  }
+
 
 
 }
